@@ -9,6 +9,7 @@ import (
 type Engine struct {
 }
 
+// 继承ServerHTTP接口的可以当做服务器的路由
 func (e *Engine) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	switch r.URL.Path {
 	case "/":
