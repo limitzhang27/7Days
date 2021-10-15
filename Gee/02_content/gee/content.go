@@ -59,7 +59,12 @@ func (c *Content) Json(code int, obj interface{}) {
 	}
 }
 
-func (c *Content) Data(code int, html string) {
+func (c *Content) Data(code int, data []byte) {
+	c.Status(code)
+	_, _ = c.Writer.Write(data)
+}
+
+func (c *Content) Html(code int, html string) {
 	c.SetHeader("Content-Type", "text/html")
 	c.Status(code)
 	_, _ = c.Writer.Write([]byte(html))
