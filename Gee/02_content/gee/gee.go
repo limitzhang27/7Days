@@ -1,27 +1,25 @@
 package gee
 
 import (
-	"fmt"
 	"net/http"
 )
 
 // HandlerFunc defines the request handler used by gee
-type HandlerFunc func(http.ResponseWriter, *http.Request)
+type HandlerFunc func(content *Content)
 
 // Engine implement the interface of ServerHTTP
 type Engine struct {
-	router map[string]HandlerFunc
+	router *router
 }
 
 func New() *Engine {
 	return &Engine{
-		router: make(map[string]HandlerFunc),
+		router: newRouter(),
 	}
 }
 
 func (engine *Engine) addRoute(method string, pattern string, handler HandlerFunc) {
-	key := method + "-" + pattern
-	engine.router[key] = handler
+	engine.router.addRoute(method, pattern, handler)
 }
 
 // POST defines the method to add POST request
@@ -40,10 +38,6 @@ func (engine *Engine) RUN(addr string) (err error) {
 }
 
 func (engine *Engine) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	key := r.Method + "-" + r.URL.Path
-	if handler, ok := engine.router[key]; ok {
-		handler(w, r)
-	} else {
-		_, _ = fmt.Fprintf(w, "404 NOT FOUND: %s\n", r.URL)
-	}
+	c := newContent(w, r)
+	engine.router.handle(c)
 }
