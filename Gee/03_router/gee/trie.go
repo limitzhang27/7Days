@@ -1,7 +1,5 @@
 package gee
 
-import "strings"
-
 type node struct {
 	pattern  string  // 待匹配路由 例如 /p/:lang
 	part     string  // 路由中的一部分 录入  :lang
@@ -30,7 +28,9 @@ func (n *node) matchChildren(part string) []*node {
 	return nodes
 }
 
+// 插入子节点
 func (n *node) insert(pattern string, parts []string, height int) {
+	// 已经匹配完了
 	if len(parts) == height {
 		n.pattern = pattern
 		return
@@ -38,20 +38,21 @@ func (n *node) insert(pattern string, parts []string, height int) {
 	part := parts[height]
 	child := n.matchChild(part)
 	if child == nil {
-		// can`t catch   new one
 		child = &node{part: part, isWild: part[0] == ':' || part[0] == '*'}
 		n.children = append(n.children, child)
 	}
+	// 除了路径的下一部分
 	child.insert(pattern, parts, height+1)
 }
 
 func (n *node) search(parts []string, height int) *node {
-	if len(parts) == height || strings.HasPrefix(n.part, "*") {
+	if len(parts) == height || n.part[0] == '*' {
 		if n.pattern == "" {
 			return nil
 		}
 		return n
 	}
+
 	part := parts[height]
 	children := n.matchChildren(part)
 	for _, child := range children {
