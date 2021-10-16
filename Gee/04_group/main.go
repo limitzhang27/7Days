@@ -12,26 +12,30 @@ func main() {
 		c.Html(http.StatusOK, "<h1>Hello, World</h1>")
 	})
 
-	r.GET("/hello", func(c *gee.Content) {
-		c.String(http.StatusOK, "hello %s, you`re at %s\n", c.Query("name"), c.Path)
-	})
-
-	r.GET("/hello/:name", func(c *gee.Content) {
-		c.String(http.StatusOK, "hello %s, you`re at %s\n", c.Param("name"), c.Path)
-	})
-
-	r.POST("/login", func(c *gee.Content) {
-		c.Json(http.StatusOK, gee.H{
-			"username": c.PostForm("username"),
-			"password": c.PostForm("password"),
+	v1 := r.Group("/v1")
+	{
+		v1.GET("/", func(c *gee.Content) {
+			c.Html(http.StatusOK, "<h1>Hello World</h1>")
 		})
-	})
 
-	r.GET("/assets/*filepath", func(c *gee.Content) {
-		c.Json(http.StatusOK, gee.H{
-			"filepath": c.Param("filpath"),
+		v1.GET("/hello", func(c *gee.Content) {
+			c.String(http.StatusOK, "hello %s, you`re at %s\n", c.Query("name"), c.Path)
 		})
-	})
+	}
+
+	v2 := r.Group("/v2")
+	{
+		v2.GET("/hello/:name", func(c *gee.Content) {
+			c.String(http.StatusOK, "hello %s, your`re at %s\n", c.Param("name"), c.Path)
+		})
+
+		v2.POST("login", func(c *gee.Content) {
+			c.Json(http.StatusOK, gee.H{
+				"username": c.PostForm("username"),
+				"password": c.PostForm("password"),
+			})
+		})
+	}
 
 	log.Fatalln(r.RUN(":9527"))
 }
