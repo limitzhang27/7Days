@@ -1,5 +1,7 @@
 package gee
 
+import "strings"
+
 type node struct {
 	pattern  string  // 待匹配路由 例如 /p/:lang
 	part     string  // 路由中的一部分 录入  :lang
@@ -46,7 +48,7 @@ func (n *node) insert(pattern string, parts []string, height int) {
 }
 
 func (n *node) search(parts []string, height int) *node {
-	if len(parts) == height || n.part[0] == '*' {
+	if len(parts) == height || strings.HasPrefix(n.part, "*") {
 		if n.pattern == "" {
 			return nil
 		}
