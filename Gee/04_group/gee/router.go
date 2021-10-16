@@ -75,7 +75,6 @@ func (r *router) getRoute(method, path string) (*node, map[string]string) {
 }
 
 func (r *router) handle(c *Content) {
-	log.Printf("HTTP method:%s pattern: %s", c.Method, c.Path)
 	n, params := r.getRoute(c.Method, c.Path)
 	if n != nil {
 		c.Params = params

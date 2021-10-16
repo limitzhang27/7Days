@@ -14,4 +14,6 @@ func TestNestedGroup(t *testing.T) {
 	if v3.prefix != "/v1/v2/v3" {
 		t.Fatal("v3 prefix should be /v1/v2/v3")
 	}
+	v3.GET("/hello", nil)
+
 }
