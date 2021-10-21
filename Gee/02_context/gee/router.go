@@ -23,7 +23,7 @@ func (r *router) addRoute(method string, pattern string, handler HandlerFunc) {
 	r.handles[key] = handler
 }
 
-func (r *router) handle(c *Content) {
+func (r *router) handle(c *Context) {
 	log.Printf("HTTP method:%s pattern: %s", c.Method, c.Path)
 	key := getKey(c.Method, c.Path)
 	if handle, ok := r.handles[key]; ok {

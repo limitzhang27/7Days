@@ -5,7 +5,7 @@ import (
 )
 
 // HandlerFunc defines the request handler used by gee
-type HandlerFunc func(content *Content)
+type HandlerFunc func(content *Context)
 
 // Engine implement the interface of ServerHTTP
 type Engine struct {
