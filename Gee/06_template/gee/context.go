@@ -73,13 +73,13 @@ func (c *Context) SetHeader(key, value string) {
 }
 
 func (c *Context) String(code int, format string, values ...interface{}) {
-	c.SetHeader("Context-Type", "text/plain")
+	c.SetHeader("Content-Type", "text/plain")
 	c.Status(code)
 	_, _ = fmt.Fprintf(c.Writer, format, values...)
 }
 
 func (c *Context) Json(code int, obj interface{}) {
-	c.SetHeader("Context-Type", "application/json")
+	c.SetHeader("Content-Type", "application/json")
 	c.Status(code)
 	encoder := json.NewEncoder(c.Writer)
 	if err := encoder.Encode(obj); err != nil {
@@ -93,7 +93,7 @@ func (c *Context) Data(code int, data []byte) {
 }
 
 func (c *Context) HTML(code int, name string, data interface{}) {
-	c.SetHeader("Context-Type", "text/html")
+	c.SetHeader("Content-Type", "text/html")
 	c.Status(code)
 	if err := c.engine.htmlTemplates.ExecuteTemplate(c.Writer, name, data); err != nil {
 		c.Fail(500, err.Error())
