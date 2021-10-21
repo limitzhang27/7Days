@@ -21,6 +21,8 @@ type Content struct {
 	// middleware
 	handlers []HandlerFunc
 	index    int
+	// engine pointer
+	engine *Engine
 }
 
 func newContent(w http.ResponseWriter, req *http.Request) *Content {
@@ -90,8 +92,10 @@ func (c *Content) Data(code int, data []byte) {
 	_, _ = c.Writer.Write(data)
 }
 
-func (c *Content) Html(code int, html string) {
+func (c *Content) Html(code int, name string, data interface{}) {
 	c.SetHeader("Content-Type", "text/html")
 	c.Status(code)
-	_, _ = c.Writer.Write([]byte(html))
+	if err := c.engine.htmlTemplates.ExecuteTemplate(c.Writer, name, data); err != nil {
+		c.Fail(500, err.Error())
+	}
 }
