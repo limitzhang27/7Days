@@ -8,7 +8,7 @@ import (
 
 type H map[string]interface{}
 
-type Content struct {
+type Context struct {
 	// origin object
 	Writer http.ResponseWriter
 	Req    *http.Request
@@ -20,8 +20,8 @@ type Content struct {
 	StatusCode int
 }
 
-func newContent(w http.ResponseWriter, req *http.Request) *Content {
-	return &Content{
+func newContent(w http.ResponseWriter, req *http.Request) *Context {
+	return &Context{
 		Writer: w,
 		Req:    req,
 		Path:   req.URL.Path,
@@ -29,35 +29,35 @@ func newContent(w http.ResponseWriter, req *http.Request) *Content {
 	}
 }
 
-func (c *Content) Param(key string) string {
+func (c *Context) Param(key string) string {
 	value, _ := c.Params[key]
 	return value
 }
 
-func (c *Content) PostForm(key string) string {
+func (c *Context) PostForm(key string) string {
 	return c.Req.FormValue(key)
 }
 
-func (c *Content) Query(key string) string {
+func (c *Context) Query(key string) string {
 	return c.Req.URL.Query().Get(key)
 }
 
-func (c *Content) Status(code int) {
+func (c *Context) Status(code int) {
 	c.StatusCode = code
 }
 
-func (c *Content) SetHeader(key, value string) {
+func (c *Context) SetHeader(key, value string) {
 	c.Writer.Header().Set(key, value)
 }
 
-func (c *Content) String(code int, format string, values ...interface{}) {
-	c.SetHeader("Content-Type", "text/plain")
+func (c *Context) String(code int, format string, values ...interface{}) {
+	c.SetHeader("Context-Type", "text/plain")
 	c.Status(code)
 	_, _ = fmt.Fprintf(c.Writer, format, values...)
 }
 
-func (c *Content) Json(code int, obj interface{}) {
-	c.SetHeader("Content-Type", "application/json")
+func (c *Context) Json(code int, obj interface{}) {
+	c.SetHeader("Context-Type", "application/json")
 	c.Status(code)
 	encoder := json.NewEncoder(c.Writer)
 	if err := encoder.Encode(obj); err != nil {
@@ -65,13 +65,13 @@ func (c *Content) Json(code int, obj interface{}) {
 	}
 }
 
-func (c *Content) Data(code int, data []byte) {
+func (c *Context) Data(code int, data []byte) {
 	c.Status(code)
 	_, _ = c.Writer.Write(data)
 }
 
-func (c *Content) Html(code int, html string) {
-	c.SetHeader("Content-Type", "text/html")
+func (c *Context) Html(code int, html string) {
+	c.SetHeader("Context-Type", "text/html")
 	c.Status(code)
 	_, _ = c.Writer.Write([]byte(html))
 }
