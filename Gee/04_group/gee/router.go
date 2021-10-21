@@ -74,7 +74,7 @@ func (r *router) getRoute(method, path string) (*node, map[string]string) {
 	return n, params
 }
 
-func (r *router) handle(c *Content) {
+func (r *router) handle(c *Context) {
 	n, params := r.getRoute(c.Method, c.Path)
 	if n != nil {
 		c.Params = params
