@@ -74,7 +74,7 @@ func (r *router) getRoute(method, path string) (*node, map[string]string) {
 	return n, params
 }
 
-func (r *router) handle(c *Content) {
+func (r *router) handle(c *Context) {
 	n, params := r.getRoute(c.Method, c.Path)
 	var curHandler HandlerFunc
 	if n != nil {
@@ -83,7 +83,7 @@ func (r *router) handle(c *Content) {
 		// 把当前路由要执行的 handler 跟中间件一样放入 handlers 中
 		curHandler = r.handlers[key]
 	} else {
-		curHandler = func(c *Content) {
+		curHandler = func(c *Context) {
 			c.String(http.StatusNotFound, "404 Not Found path: %s", c.Path)
 		}
 	}

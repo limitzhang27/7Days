@@ -6,7 +6,7 @@ import (
 )
 
 func Logger() HandlerFunc {
-	return func(c *Content) {
+	return func(c *Context) {
 		// Start time
 		t := time.Now()
 		// Process request
