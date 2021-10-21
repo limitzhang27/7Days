@@ -8,7 +8,7 @@ import (
 )
 
 // HandlerFunc defines the request handler used by gee
-type HandlerFunc func(c *Content)
+type HandlerFunc func(c *Context)
 
 // Engine implement the interface of ServerHTTP
 type (
@@ -16,7 +16,7 @@ type (
 		prefix      string
 		middlewares []HandlerFunc // support middleware
 		parent      *RouterGroup  // support nesting
-		engine      *Engine       // all group share a Engine instance
+		engine      *Engine       // all group share an Engine instance
 	}
 	Engine struct {
 		*RouterGroup
@@ -73,7 +73,7 @@ func (group *RouterGroup) createStaticHandler(relativePath string, fs http.FileS
 	absolutePath := path.Join(group.prefix, relativePath)
 	fileServer := http.StripPrefix(absolutePath, http.FileServer(fs))
 
-	return func(c *Content) {
+	return func(c *Context) {
 		file := c.Param("filepath")
 		if _, err := fs.Open(file); err != nil {
 			c.Status(http.StatusNotFound)
@@ -114,7 +114,7 @@ func (engine *Engine) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			middlewares = append(middlewares, group.middlewares...)
 		}
 	}
-	c := newContent(w, r)
+	c := newContext(w, r)
 	c.handlers = middlewares
 	c.engine = engine
 	engine.router.handle(c)
