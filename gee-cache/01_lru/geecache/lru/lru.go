@@ -2,7 +2,6 @@ package lru
 
 import (
 	"container/list"
-	"fmt"
 )
 
 type Cache struct {
@@ -48,9 +47,8 @@ func (c *Cache) Get(key string) (value Value, ok bool) {
 func (c *Cache) RemoveOldest() {
 	ele := c.ll.Back() // 返回双向链表中最后一个元素，如果链表为空会返回nil
 	if ele != nil {
-		c.ll.Remove(ele)         // 链表删除元素
-		kv := ele.Value.(*entry) // 元素转成 entry 类型
-		fmt.Println(kv)
+		c.ll.Remove(ele)                                       // 链表删除元素
+		kv := ele.Value.(*entry)                               // 元素转成 entry 类型
 		delete(c.cache, kv.key)                                // 删除哈希表中的值
 		c.nBytes -= int64(len(kv.key)) + int64(kv.value.Len()) // 重置当前使用内存大小
 		// 存在回调函数则执行
