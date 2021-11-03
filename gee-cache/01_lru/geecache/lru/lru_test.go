@@ -1,6 +1,7 @@
 package lru
 
 import (
+	"reflect"
 	"testing"
 )
 
