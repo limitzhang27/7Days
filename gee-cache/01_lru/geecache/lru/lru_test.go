@@ -1,6 +1,7 @@
 package lru
 
 import (
+	"reflect"
 	"testing"
 )
 
@@ -34,5 +35,22 @@ func TestRemoveOldest(t *testing.T) {
 	lru.Add(k3, String(v3))
 	if _, ok := lru.Get(k1); ok || lru.Len() != 2 {
 		t.Fatalf("RemoveOldest key1 failed")
+	}
+}
+
+func TestOnEvicted(t *testing.T) {
+	keys := make([]string, 0)
+	onEvicted := func(key string, value Value) {
+		keys = append(keys, key)
+	}
+	lru := New(int64(10), onEvicted)
+	lru.Add("key1", String("123456"))
+	lru.Add("k2", String("v2"))
+	lru.Add("k3", String("v3"))
+	lru.Add("k4", String("v3"))
+
+	expect := []string{"key1", "k2"}
+	if !reflect.DeepEqual(keys, expect) {
+		t.Fatalf("Call OnEvicted failed, expect keys equals to %s", expect)
 	}
 }
