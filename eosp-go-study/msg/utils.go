@@ -1,4 +1,4 @@
-package msg
+package main
 
 import (
 	"bytes"
@@ -8,9 +8,11 @@ import (
 const TYPE_EMIAL = "EMAIL"
 const TYPE_PHONE = "MSG"
 
+type ByteView []byte
+
 type Message struct {
 	Type string
-	data interface{}
+	Data interface{}
 }
 
 type MessageEmail struct {

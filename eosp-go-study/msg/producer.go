@@ -1,26 +1,21 @@
-package msg
+package main
 
-import "log"
+import (
+	"fmt"
+	"log"
+)
 
 type Producer struct {
-	num   int
 	topic string
 	c     MessageChannel
+	store *Store
 }
 
-func NewProducer(num int, topic string, chanSize int) *Producer {
+func NewProducer(num int, topic string, chanSize int, store *Store) *Producer {
 	return &Producer{
-		num:   num,
 		topic: topic,
 		c:     make(MessageChannel, chanSize),
-	}
-}
-
-func (p *Producer) Start() {
-	for i := 0; i < p.num; i++ {
-		go func() {
-			p.startProducer()
-		}()
+		store: store,
 	}
 }
 
@@ -29,22 +24,23 @@ func (p *Producer) startProducer() {
 		for {
 			select {
 			case msg := <-p.c:
-				data, err := EncodeMessage(msg)
-				if err != nil {
-					log.Println("[Producer]Encode Message err ", err)
-					continue
-				}
 				log.Printf("[Producer] Send Data %v\n", msg)
 				go func() {
-					_ = p.udpSend(data)
+					_ = p.finalSend(msg)
 				}()
 			}
 		}
 	}()
 }
 
-func (p *Producer) udpSend(data []byte) error {
-	log.Printf("[Producer]UPD Send data len(%d)", len(data))
+func (p *Producer) finalSend(message Message) error {
+	topic := message.Type
+	data := message.Data
+	byteData, err := EncodeMessage(data)
+	if err != nil {
+		return fmt.Errorf("[Producer]Encode Message err %s", err)
+	}
+	_ = p.store.Push(topic, byteData)
 	return nil
 }
 

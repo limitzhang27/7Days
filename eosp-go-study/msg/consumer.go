@@ -1,7 +1,15 @@
-package msg
+package main
 
 type Consumer struct {
-	num   int
 	topic string
 	c     MessageChannel
+	store *Store
+}
+
+func NewConsumer(num int, topic string, chanSize int, store *Store) *Consumer {
+	return &Consumer{
+		topic: topic,
+		c:     make(MessageChannel, chanSize),
+		store: store,
+	}
 }
