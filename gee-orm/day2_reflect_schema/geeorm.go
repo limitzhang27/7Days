@@ -2,7 +2,7 @@ package geeorm
 
 import (
 	"database/sql"
-	dialect "geeorm/dailect"
+	dialect "geeorm/dialect"
 	"geeorm/log"
 	"geeorm/session"
 )

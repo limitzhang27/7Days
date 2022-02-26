@@ -1,7 +1,7 @@
 package schema
 
 import (
-	dialect "geeorm/dailect"
+	dialect "geeorm/dialect"
 	"testing"
 )
 
